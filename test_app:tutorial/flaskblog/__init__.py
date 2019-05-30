@@ -7,25 +7,40 @@ from flask_mail import Mail
 
 from config import Config
 
-# from forms import RegistrationForm, LoginForm
 
-
-app = Flask(__name__)
-
-app.config.from_object(Config)
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-bcrypt = Bcrypt(app)
-mail = Mail(app)
-login_manager = LoginManager(app)
-login_manager.login_view = "login"
+db = SQLAlchemy()
+migrate = Migrate()
+bcrypt = Bcrypt()
+mail = Mail()
+login_manager = LoginManager()
+login_manager.login_view = "users.login"
 login_manager.login_message_category = "info"
 
-from flaskblog import routs, models
+
 from flaskblog.models import User, Post
 
 
-@app.shell_context_processor
-def make_shell_context():
-    return {"db": db, "User": User, "Post": Post, "current_user": current_user}
+# @app.shell_context_processor
+# def make_shell_context():
+#     return {"db": db, "User": User, "Post": Post, "current_user": current_user}
+
+
+def create_app(config_class=Config):
+
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+
+    db.init_app(app)
+    bcrypt.init_app(app)
+    mail.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)
+
+    from flaskblog.users.routs import users
+    from flaskblog.posts.routs import posts
+    from flaskblog.main.routs import main
+    app.register_blueprint(users)
+    app.register_blueprint(posts)
+    app.register_blueprint(main)
+
+    return app
