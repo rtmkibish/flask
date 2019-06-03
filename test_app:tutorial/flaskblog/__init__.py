@@ -20,9 +20,7 @@ login_manager.login_message_category = "info"
 from flaskblog.models import User, Post
 
 
-# @app.shell_context_processor
-# def make_shell_context():
-#     return {"db": db, "User": User, "Post": Post, "current_user": current_user}
+
 
 
 def create_app(config_class=Config):
@@ -39,8 +37,14 @@ def create_app(config_class=Config):
     from flaskblog.users.routs import users
     from flaskblog.posts.routs import posts
     from flaskblog.main.routs import main
+    from flaskblog.errors.handlers import errors
     app.register_blueprint(users)
     app.register_blueprint(posts)
     app.register_blueprint(main)
+    app.register_blueprint(errors)
+
+    @app.shell_context_processor
+    def make_shell_context():
+        return {"db": db, "User": User, "Post": Post, "current_user": current_user}
 
     return app

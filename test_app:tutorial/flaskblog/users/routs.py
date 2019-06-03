@@ -53,7 +53,7 @@ def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
-            picture_file = form.save_picture(current_user.image_file)
+            picture_file = form.save_picture()
             current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data

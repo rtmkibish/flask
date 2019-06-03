@@ -82,7 +82,7 @@ class UpdateAccountForm(FlaskForm):
         self.username.data = user.username
         self.email.data = user.email
 
-    def save_picture(self, prev_pic):
+    def save_picture(self):
         random_hex = secrets.token_hex(8)
         _, file_ext = os.path.splitext(self.picture.data.filename)
         picture_file_n = random_hex + file_ext
@@ -93,8 +93,9 @@ class UpdateAccountForm(FlaskForm):
         i = Image.open(self.picture.data)
         i.thumbnail(image_size)
         i.save(picture_path)
-        if prev_pic != "default.jpg":
-            os.remove(os.path.join(current_app.root_path, "static/profile_pics", prev_pic))
+        exist_pics = os.listdir(os.path.join(current_app.root_path, 'static/profile_pics'))
+        if current_user.image_file in exist_pics and current_user.image_file != "default.jpg":
+            os.remove(os.path.join(current_app.root_path, "static/profile_pics", current_user.image_file))
 
         return picture_file_n
 
