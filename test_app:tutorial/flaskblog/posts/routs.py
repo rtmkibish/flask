@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, redirect, flash, abort, request, url_for
+import os
+
+from flask import Blueprint, render_template, redirect, flash, abort, request, url_for, current_app
 from flask_login import login_required, current_user
 
 from flaskblog.models import Post
@@ -23,7 +25,8 @@ def create_post():
 @posts.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template("post.html", post=post)
+    is_img_exist = post.author.image_file in os.listdir(os.path.join(current_app.root_path + '/static/profile_pics'))
+    return render_template("post.html", post=post, is_img_exist=is_img_exist)
 
 
 @posts.route("/post/<int:post_id>/update", methods=["GET", "POST"])

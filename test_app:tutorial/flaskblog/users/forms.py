@@ -17,9 +17,9 @@ class RegistrationForm(FlaskForm):
         label="Username", validators=[DataRequired(), Length(min=2, max=20)]
     )
 
-    email = StringField(label="Email", validators=[DataRequired(), Email()])
+    email = StringField(label="Email", validators=[DataRequired(), Email(), Length(min=10, max=120)])
 
-    password = PasswordField(label="Password", validators=[DataRequired()])
+    password = PasswordField(label="Password", validators=[DataRequired(), Length(min=6, max=60)])
 
     confirm_password = PasswordField(
         label="Confirm Password",
@@ -44,8 +44,8 @@ class RegistrationForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField(label="Email", validators=[DataRequired(), Email()])
-    password = PasswordField(label="Password", validators=[DataRequired()])
+    email = StringField(label="Email", validators=[DataRequired(), Email(), Length(min=10, max=120)])
+    password = PasswordField(label="Password", validators=[DataRequired(), Length(min=6, max=60)])
     remember = BooleanField(label="Remember Me")
     submit = SubmitField(label="Log In")
 
@@ -54,7 +54,7 @@ class UpdateAccountForm(FlaskForm):
     username = StringField(
         label="Username", validators=[DataRequired(), Length(min=2, max=20)]
     )
-    email = StringField(label="Email", validators=[DataRequired(), Email()])
+    email = StringField(label="Email", validators=[DataRequired(), Email(), Length(min=10, max=120)])
     picture = FileField(
         label="Update your avatar", validators=[FileAllowed(["jpg", "png"])]
     )
@@ -101,7 +101,7 @@ class UpdateAccountForm(FlaskForm):
 
 
 class RequestResetForm(FlaskForm):
-    email = StringField(label='Email', validators=[DataRequired(), Email()])
+    email = StringField(label='Email', validators=[DataRequired(), Email(), Length(min=10, max=120)])
     submit = SubmitField('Request Password Reset')
 
     def validate_email(self, email):
@@ -111,6 +111,6 @@ class RequestResetForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField(label='Password', validators=[DataRequired(), Length(min=6)])
+    password = PasswordField(label='Password', validators=[DataRequired(), Length(min=6, max=60)])
     confirm_password = PasswordField(label='Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField(label='Reset Password')

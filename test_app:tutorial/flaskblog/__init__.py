@@ -20,9 +20,6 @@ login_manager.login_message_category = "info"
 from flaskblog.models import User, Post
 
 
-
-
-
 def create_app(config_class=Config):
 
     app = Flask(__name__)
