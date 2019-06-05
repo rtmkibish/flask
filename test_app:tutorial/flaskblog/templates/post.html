@@ -19,26 +19,59 @@
         </div>
         <h2>{{ post.title }}</h2>
         <p class="article-content">{{ post.content }}</p>
+        {% if comments %}
+            <div>
+                <ul class="list-group list-group-flush">
+                    {% for comment in comments %}
+                        <li class="list-group-item">
+                            <p>
+                                <span class="badge badge-primary badge-pill">{{ comment.author.username }}</span>
+                            </p>
+                            {{ comment.comment_text }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% if current_user.is_authenticated %}
+        <form class="article-content" action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.text_comment.label(class="form-control-label") }}
+
+                {% if form.text_comment.errors %}
+                    {{ form.text_comment(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.text_comment.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                {% else %}
+                    {{ form.text_comment(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            {{ form.submit(class='btn btn-outline-info') }}
+        </form>
+    {% endif %}
     </div>
 </article>
-
 <!-- Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <form class="" action="{{ url_for('posts.post_delete', post_id=post.id) }}" method="post">
-            <input type="submit" class="btn btn-danger" value="Delete">
-        </form>
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <form class="" action="{{ url_for('posts.post_delete', post_id=post.id) }}" method="post">
+                <input type="submit" class="btn btn-danger" value="Delete">
+            </form>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 {% endblock content %}

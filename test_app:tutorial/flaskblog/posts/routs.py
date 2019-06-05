@@ -3,8 +3,8 @@ import os
 from flask import Blueprint, render_template, redirect, flash, abort, request, url_for, current_app
 from flask_login import login_required, current_user
 
-from flaskblog.models import Post
-from flaskblog.posts.forms import PostForm
+from flaskblog.models import Post, PostComment
+from flaskblog.posts.forms import PostForm, PostCommentForm
 
 posts = Blueprint('posts', __name__)
 
@@ -22,11 +22,16 @@ def create_post():
     )
 
 
-@posts.route("/post/<int:post_id>")
+@posts.route("/post/<int:post_id>", methods=['GET', 'POST'])
 def post(post_id):
     post = Post.query.get_or_404(post_id)
+    comments = PostComment.query.filter_by(post=post).all()
     is_img_exist = post.author.image_file in os.listdir(os.path.join(current_app.root_path + '/static/profile_pics'))
-    return render_template("post.html", post=post, is_img_exist=is_img_exist)
+    form = PostCommentForm()
+    if form.validate_on_submit():
+        com = PostComment.create_comment(form, post, current_user)
+        return redirect(url_for('posts.post', post_id=post.id))
+    return render_template("post.html", post=post, is_img_exist=is_img_exist, comments=comments, form=form)
 
 
 @posts.route("/post/<int:post_id>/update", methods=["GET", "POST"])

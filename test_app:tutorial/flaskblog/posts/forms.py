@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired, Length
 
-from flaskblog.models import Post
+from flaskblog.models import Post, PostComment
 from flaskblog import db
 
 
@@ -30,3 +30,9 @@ class PostForm(FlaskForm):
         post.title = self.title.data
         post.content = self.content.data
         db.session.commit()
+
+
+class PostCommentForm(FlaskForm):
+    text_comment = TextAreaField(label='Leave your comment here', validators=[DataRequired(), Length(min=5, max=150)])
+    submit = SubmitField(label='Comment')
+

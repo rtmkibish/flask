@@ -19,6 +19,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
     posts = db.relationship("Post", backref="author", lazy=True)
+    comments = db.relationship('PostComment', backref='author', lazy=True)
 
     @classmethod
     def create_user(cls, form, u_password):
@@ -56,10 +57,32 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    comments = db.relationship('PostComment', backref='post', lazy=True)
 
     def __repr__(self):
         return f"Post('{self.title}', {self.date_posted})"
 
     def post_delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class PostComment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    comment_text = db.Column(db.Text, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __repr__(self):
+        return f"PostComment('{self.id}', '{self.comment_text[:10]}' )"
+
+    @classmethod
+    def create_comment(cls, form, post, author):
+        comment = cls(comment_text=form.text_comment.data, post_id=post.id, user_id=author.id)
+        db.session.add(comment)
+        db.session.commit()
+        return comment
+
+    def delete_comment(self):
         db.session.delete(self)
         db.session.commit()
