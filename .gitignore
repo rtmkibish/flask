@@ -4,4 +4,4 @@
 */site.db
 .idea
 config.json
-test_app:tutorial/flaskblog/static/profile_pics/*
+test_app/flaskblog/static/profile_pics/*
