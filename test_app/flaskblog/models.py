@@ -18,8 +18,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship("Post", backref="author", lazy=True)
-    comments = db.relationship('PostComment', backref='author', lazy=True)
+    posts = db.relationship("Post", backref="author", lazy=True, cascade='all,delete')
+    comments = db.relationship('PostComment', backref='author', lazy=True, cascade='all,delete')
 
     @classmethod
     def create_user(cls, form, u_password):
@@ -57,7 +57,7 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    comments = db.relationship('PostComment', backref='post', lazy=True)
+    comments = db.relationship('PostComment', backref='post', lazy=True, cascade='all,delete')
 
     def __repr__(self):
         return f"Post('{self.title}', {self.date_posted})"
@@ -72,9 +72,10 @@ class PostComment(db.Model):
     comment_text = db.Column(db.Text, nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('post_comment.id'), nullable=True)
 
     def __repr__(self):
-        return f"PostComment('{self.id}', '{self.comment_text[:10]}' )"
+        return f"PostComment('{self.id}', '{self.comment_text[:10]}' {self.parent_id})"
 
     @classmethod
     def create_comment(cls, form, post, author):

@@ -1,5 +1,7 @@
 import os
 
+from collections import defaultdict
+
 from flask import Blueprint, render_template, redirect, flash, abort, request, url_for, current_app
 from flask_login import login_required, current_user
 
@@ -25,12 +27,22 @@ def create_post():
 @posts.route("/post/<int:post_id>", methods=['GET', 'POST'])
 def post(post_id):
     post = Post.query.get_or_404(post_id)
+
     comments = PostComment.query.filter_by(post=post).all()
+    comments_tree = defaultdict(list)
+
+    for com in comments:
+        comments_tree[com.parent_id].append(com)
+
+    # for key in comments_tree:
+    # print(comments_tree)
+
     is_img_exist = post.author.image_file in os.listdir(os.path.join(current_app.root_path + '/static/profile_pics'))
     form = PostCommentForm()
     if form.validate_on_submit():
-        com = PostComment.create_comment(form, post, current_user)
-        return redirect(url_for('posts.post', post_id=post.id))
+        if current_user.is_authenticated:
+            PostComment.create_comment(form, post, current_user)
+            return redirect(url_for('posts.post', post_id=post.id))
     return render_template("post.html", post=post, is_img_exist=is_img_exist, comments=comments, form=form)
 
 
@@ -63,3 +75,4 @@ def post_delete(post_id):
     post.post_delete()
     flash("The post has been deleted successfuly!", "success")
     return redirect(url_for("main.home"))
+

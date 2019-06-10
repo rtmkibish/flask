@@ -90,7 +90,10 @@ class UpdateAccountForm(FlaskForm):
             current_app.root_path, "static/profile_pics", picture_file_n
         )
         image_size = (125, 125)
-        i = Image.open(self.picture.data)
+        try:
+            i = Image.open(self.picture.data)
+        except OSError:
+            return None
         i.thumbnail(image_size)
         i.save(picture_path)
         exist_pics = os.listdir(os.path.join(current_app.root_path, 'static/profile_pics'))

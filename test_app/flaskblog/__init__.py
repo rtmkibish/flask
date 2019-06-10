@@ -17,7 +17,7 @@ login_manager.login_view = "users.login"
 login_manager.login_message_category = "info"
 
 
-from flaskblog.models import User, Post
+from flaskblog.models import User, Post, PostComment
 
 
 def create_app(config_class=Config):
@@ -42,6 +42,6 @@ def create_app(config_class=Config):
 
     @app.shell_context_processor
     def make_shell_context():
-        return {"db": db, "User": User, "Post": Post, "current_user": current_user}
+        return {"db": db, "User": User, "Post": Post, "current_user": current_user, "PostComment": PostComment}
 
     return app

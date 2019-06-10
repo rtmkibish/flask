@@ -56,7 +56,8 @@ def account():
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = form.save_picture()
-            current_user.image_file = picture_file
+            current_user.image_file = picture_file or current_user.image_file
+            flash("The profile image wasn't updated due to invalid file", "danger")
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()

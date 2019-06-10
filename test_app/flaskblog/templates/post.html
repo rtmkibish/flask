@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+
 {% block content %}
 <article class="media content-section">
     {% if is_img_exist %}
@@ -20,17 +21,33 @@
         <h2>{{ post.title }}</h2>
         <p class="article-content">{{ post.content }}</p>
         {% if comments %}
-            <div>
-                <ul class="list-group list-group-flush">
-                    {% for comment in comments %}
-                        <li class="list-group-item">
+            <div class="list-group list-group-flush">
+
+            {% macro print_children(List, parent_id) %}
+                <ul class="list-group-item">
+                    {% for el in List %}
+                        {% if el.parent_id == parent_id %}
                             <p>
-                                <span class="badge badge-primary badge-pill">{{ comment.author.username }}</span>
+                                <span class="badge badge-primary badge-pill">{{ el.author.username }}</span>
                             </p>
-                            {{ comment.comment_text }}
-                        </li>
+                            <li class="list-group-item">{{ el.comment_text }}</li>
+                            {% set parent_id = el.id %}
+                            {{ print_children(List, parent_id) }}
+                        {% endif %}
                     {% endfor %}
                 </ul>
+            {% endmacro %}
+            {{ print_children(comments, None) }}
+{#                <ul class="list-group list-group-flush">#}
+{#                    {% for comment in comments %}#}
+{#                        <li class="list-group-item">#}
+{#                            <p>#}
+{#                                <span class="badge badge-primary badge-pill">{{ comment.author.username }}</span>#}
+{#                            </p>#}
+{#                            {{ comment.comment_text }}#}
+{#                        </li>#}
+{#                    {% endfor %}#}
+{#                </ul>#}
             </div>
         {% endif %}
     {% if current_user.is_authenticated %}
@@ -55,6 +72,7 @@
     {% endif %}
     </div>
 </article>
+
 <!-- Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
