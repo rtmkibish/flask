@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+        <form class="article-content" action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.text_comment.label(class="form-control-label") }}
+
+                {% if form.text_comment.errors %}
+                    {{ form.text_comment(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.text_comment.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                {% else %}
+                    {{ form.text_comment(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            {{ form.submit(class='btn btn-outline-info') }}
+        </form>
+{% endif %}
+{% endblock content %}

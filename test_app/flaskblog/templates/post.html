@@ -27,10 +27,10 @@
                 <ul class="list-group-item">
                     {% for el in List %}
                         {% if el.parent_id == parent_id %}
-                            <p>
-                                <span class="badge badge-primary badge-pill">{{ el.author.username }}</span>
-                            </p>
-                            <li class="list-group-item">{{ el.comment_text }}</li>
+                            <span class="badge badge-primary badge-pill">{{ el.author.username }}</span>
+                            <br>
+                            <li>{{ el.comment_text }}</li>
+                            <a class="btn btn-outline-info btn-sm mt-1 ml-1" href="{{ url_for('posts.add_reply', comment_id=el.id) }}" target="_blank">Reply</a>
                             {% set parent_id = el.id %}
                             {{ print_children(List, parent_id) }}
                         {% endif %}
@@ -73,7 +73,7 @@
     </div>
 </article>
 
-<!-- Modal -->
+<!--Delete  Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">

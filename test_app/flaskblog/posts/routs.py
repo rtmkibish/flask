@@ -29,13 +29,10 @@ def post(post_id):
     post = Post.query.get_or_404(post_id)
 
     comments = PostComment.query.filter_by(post=post).all()
-    comments_tree = defaultdict(list)
-
-    for com in comments:
-        comments_tree[com.parent_id].append(com)
-
-    # for key in comments_tree:
-    # print(comments_tree)
+    # comments_tree = defaultdict(list)
+    #
+    # for com in comments:
+    #     comments_tree[com.parent_id].append(com)
 
     is_img_exist = post.author.image_file in os.listdir(os.path.join(current_app.root_path + '/static/profile_pics'))
     form = PostCommentForm()
@@ -75,4 +72,18 @@ def post_delete(post_id):
     post.post_delete()
     flash("The post has been deleted successfuly!", "success")
     return redirect(url_for("main.home"))
+
+
+@posts.route('/comment/<int:comment_id>', methods=["GET", "POST"])
+@login_required
+def add_reply(comment_id):
+    comment = PostComment.query.get_or_404(int(comment_id))
+    post = Post.query.get_or_404(comment.post_id)
+    form = PostCommentForm()
+    if form.validate_on_submit():
+        PostComment.add_reply(form, post.id, current_user.id, comment.id)
+        flash('The reply added', 'success')
+        return redirect(url_for('posts.post', post_id=post.id))
+
+    return render_template('reply.html', form=form)
 
