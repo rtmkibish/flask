@@ -1,6 +1,5 @@
 import os
 
-from collections import defaultdict
 
 from flask import Blueprint, render_template, redirect, flash, abort, request, url_for, current_app
 from flask_login import login_required, current_user
@@ -80,10 +79,11 @@ def add_reply(comment_id):
     comment = PostComment.query.get_or_404(int(comment_id))
     post = Post.query.get_or_404(comment.post_id)
     form = PostCommentForm()
+    is_img_exist = comment.author.image_file in os.listdir(os.path.join(current_app.root_path + '/static/profile_pics'))
     if form.validate_on_submit():
         PostComment.add_reply(form, post.id, current_user.id, comment.id)
         flash('The reply added', 'success')
         return redirect(url_for('posts.post', post_id=post.id))
 
-    return render_template('reply.html', form=form)
+    return render_template('reply.html', form=form, comment=comment, is_img_exist=is_img_exist, post=post)
 

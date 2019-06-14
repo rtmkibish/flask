@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+     <div class="content-section">
+            <div class="media">
+                {% if user.image_file in exist_pics %}
+                    <img class="rounded-circle account-img" src="{{ url_for('static', filename="profile_pics/" + user.image_file) }}" alt="User image">
+                {% else %}
+                    <img class="rounded-circle account-img" src="{{ url_for('static', filename="profile_pics/default.jpg") }}" alt="">
+                {% endif %}
+                <div class="media-body">
+                    <h2 class="account-heading">{{ user.username }}</h2>
+                    <p class="next-secondary">{{ user.email }}</p>
+                </div>
+            </div>
+     </div>
+
+    {% for post in posts.items %}
+        <article class="media content-section">
+            {% if post.author.image_file in exist_pics %}
+                <img class='rounded-circle article-img' src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}" alt="User img">
+            {% else %}
+                <img class='rounded-circle article-img' src="{{ url_for('static', filename='profile_pics/default.jpg') }}" alt='default user image'>
+            {% endif %}
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                    <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div>
+                <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                <p class="article-content">{{ post.content }}</p>
+            </div>
+        </article>
+   {% endfor %}
+{% endblock content %}

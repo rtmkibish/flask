@@ -73,6 +73,7 @@ class PostComment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('post_comment.id'), nullable=True)
+    parents = db.relationship('PostComment', backref=db.backref('parent', remote_side='PostComment.id'), lazy=True)
 
     def __repr__(self):
         return f"PostComment('{self.id}', '{self.comment_text[:10]}' {self.parent_id})"

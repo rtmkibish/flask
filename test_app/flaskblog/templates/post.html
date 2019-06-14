@@ -21,18 +21,32 @@
         <h2>{{ post.title }}</h2>
         <p class="article-content">{{ post.content }}</p>
         {% if comments %}
-            <div class="list-group list-group-flush">
+            <div class="media content-section">
 
             {% macro print_children(List, parent_id) %}
-                <ul class="list-group-item">
+                <ul>
                     {% for el in List %}
                         {% if el.parent_id == parent_id %}
-                            <span class="badge badge-primary badge-pill">{{ el.author.username }}</span>
-                            <br>
-                            <li>{{ el.comment_text }}</li>
-                            <a class="btn btn-outline-info btn-sm mt-1 ml-1" href="{{ url_for('posts.add_reply', comment_id=el.id) }}" target="_blank">Reply</a>
+                            <dt>
+                                <div class="article-metadata">
+                                <img class="rounded-circle account-img sm" src="{{ url_for('static', filename='profile_pics/' + el.author.image_file) }}" alt="User image">
+                                <br>
+                                <span class="badge badge-primary badge-pill">{{ el.author.username }}</span>
+                                <br>
+                                {% if el.parent_id != None %}
+                                    <small class="text-muted">replied to {{ el.parent.author.username }}</small>
+                                    <br>
+                                {% else %}
+                                    <small class="text-muted">post comment</small>
+                                    <br>
+                                {% endif %}
+                                {{ el.comment_text }}
+                                <br>
+                                <a class="btn-sm mt-1" href="{{ url_for('posts.add_reply', comment_id=el.id) }}" target="_blank">Reply</a>
+                                </div>
+                            </dt>
                             {% set parent_id = el.id %}
-                            {{ print_children(List, parent_id) }}
+                            <dl>{{ print_children(List, parent_id) }}</dl>
                         {% endif %}
                     {% endfor %}
                 </ul>

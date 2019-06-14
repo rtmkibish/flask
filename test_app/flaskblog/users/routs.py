@@ -57,7 +57,6 @@ def account():
         if form.picture.data:
             picture_file = form.save_picture()
             current_user.image_file = picture_file or current_user.image_file
-            flash("The profile image wasn't updated due to invalid file", "danger")
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
@@ -77,15 +76,18 @@ def account():
 
 @users.route("/user/<string:username>")
 def user_posts(username):
-    page = request.args.get("page", 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
-    exist_files = os.listdir(os.path.join(current_app.root_path + '/static/profile_pics'))
+    if user == current_user:
+        return redirect(url_for('users.account'))
+
+    exist_pics = os.listdir(os.path.join(current_app.root_path, 'static/profile_pics'))
+    page = request.args.get("page", 1, type=int)
     posts = (
         Post.query.filter_by(author=user)
         .order_by(Post.date_posted.desc())
         .paginate(page=page, per_page=20)
     )
-    return render_template("user_posts.html", posts=posts, user=user, exist_files=exist_files)
+    return render_template("user.html", user=user, exist_pics=exist_pics, posts=posts)
 
 
 @users.route('/reset_password', methods=['GET', 'POST'])
