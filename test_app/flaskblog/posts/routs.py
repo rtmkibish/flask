@@ -28,10 +28,6 @@ def post(post_id):
     post = Post.query.get_or_404(post_id)
 
     comments = PostComment.query.filter_by(post=post).all()
-    # comments_tree = defaultdict(list)
-    #
-    # for com in comments:
-    #     comments_tree[com.parent_id].append(com)
 
     is_img_exist = post.author.image_file in os.listdir(os.path.join(current_app.root_path + '/static/profile_pics'))
     form = PostCommentForm()
