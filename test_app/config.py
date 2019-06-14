@@ -4,8 +4,7 @@ import json
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# with open('/etc/config.json') as config_file:
-with open('/Users/rtm/Documents/Development/Flask/flask_edu/test_app/config.json') as config_file:
+with open('/etc/config.json') as config_file:
     config = json.load(config_file)
 
 
