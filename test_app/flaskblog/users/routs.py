@@ -6,7 +6,7 @@ from flaskblog import bcrypt, db
 from flaskblog.users.utils import send_reset_email
 from flaskblog.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 
-from flaskblog.models import User, Post
+from flaskblog.models import User, Post, PostComment
 
 users = Blueprint('users', __name__)
 
@@ -87,7 +87,8 @@ def user_posts(username):
         .order_by(Post.date_posted.desc())
         .paginate(page=page, per_page=20)
     )
-    return render_template("user.html", user=user, exist_pics=exist_pics, posts=posts)
+    comments_counter = {post.id: PostComment.query.filter_by(post=post).count() for post in posts.items}
+    return render_template("user.html", user=user, exist_pics=exist_pics, posts=posts, comments_counter=comments_counter)
 
 
 @users.route('/reset_password', methods=['GET', 'POST'])

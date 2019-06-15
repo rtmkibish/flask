@@ -94,3 +94,4 @@ class PostComment(db.Model):
         reply = cls(comment_text=form.text_comment.data, post_id=post_id, user_id=author_id, parent_id=parent_id)
         db.session.add(reply)
         db.session.commit()
+

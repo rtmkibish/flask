@@ -28,7 +28,24 @@
                     <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
                 </div>
                 <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
-                <p class="article-content">{{ post.content }}</p>
+                {% if post.content|count > 200 %}
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ post.id }}" aria-expanded="false" aria-controls="collapseExample">
+                        Постмотреть содержимое поста
+                    </button>
+                    <div class="collapse" id="collapse{{ post.id }}">
+                        <div class="card card-body">
+                            <p class="article-content">{{ post.content }}</p>
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ post.id }}" aria-expanded="false" aria-controls="collapseExample">
+                                Свернуть
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="article-content">{{ post.content }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <small class="badge badge-info">{{ comments_counter[post.id] }}</small>
             </div>
         </article>
    {% endfor %}
